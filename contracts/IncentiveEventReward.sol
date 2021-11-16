@@ -26,8 +26,8 @@ contract StakingReward is Ownable {
      * @param _rewardAmount reward amount
      * @param _sigs list of validator signatures
      */
-    function claimReward(address calldata _recipient, uint256 calldata _rewardAmount, bytes[] calldata _sigs) external {
-        staking.verifySignatures(_rewardRequest, _sigs);
+    function claimReward(address _recipient, uint256 _rewardAmount, bytes[] calldata _sigs) external {
+        bytes32 hash = keccak256(abi.encodePacked(_recipient, _rewardAmount)).toEthSignedMessageHash();
 
         uint256 newReward = _rewardAmount - claimedRewardAmounts[_recipient];
         require(newReward > 0, "No new reward");
