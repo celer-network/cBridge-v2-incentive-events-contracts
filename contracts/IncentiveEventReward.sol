@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
-contract StakingReward is Ownable {
+contract IncentiveEventReward is Ownable {
     using SafeERC20 for IERC20;
     using ECDSA for bytes32;
 

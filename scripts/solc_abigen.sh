@@ -53,9 +53,11 @@ EOF
 
 # MUST run this under repo root
 # will generate a single combined.json under $CNTRDIR
+# solc --base-path $PWD --allow-paths . --overwrite --optimize --optimize-runs 800 --pretty-json --combined-json abi,bin -o . '@openzeppelin/'=openzeppelin-contracts-4.2.0/ IncentiveEventReward.sol
+# jq '."contracts"|=with_entries(select(.key|test("^openzeppelin")|not))' combined.json>tmp.json
 run_solc() {
   pushd $CNTRDIR
-  solc --base-path $PWD --allow-paths . --overwrite --optimize --optimize-runs 800 --pretty-json --combined-json abi,bin -o . '@openzeppelin/'=$OPENZEPPELIN/ \
+  solc --base-path $PWD --allow-paths . --overwrite --optimize --optimize-runs 800 --pretty-json --combined-json abi,bin -o . '@openzeppelin/'=openzeppelin-contracts-4.2.0/ \
     $(for f in ${solFiles[@]}; do echo -n "$f.sol "; done)
   no_openzeppelin combined.json # combined.json file name is hardcoded in solc
   popd
@@ -69,6 +71,7 @@ no_openzeppelin() {
 }
 
 # MUST run this under contract repo root
+# abigen -combined-json ../$CNTRDIR/combined.json -pkg eth -out eth/bindings.go
 run_abigen() {
   PR_COMMIT_ID=$(git rev-parse --short HEAD)
   git clone $GO_REPO
