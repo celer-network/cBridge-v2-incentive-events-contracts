@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 contract StakingReward is Ownable {
     using SafeERC20 for IERC20;
+    using ECDSA for bytes32;
 
     IERC20 public immutable CELER_TOKEN;
 
@@ -24,10 +25,12 @@ contract StakingReward is Ownable {
      * @dev every recipient only have one chance to claim all the reward
      * @param _recipient recipient address
      * @param _rewardAmount reward amount
-     * @param _sigs list of validator signatures
+     * @param _sig signature
      */
-    function claimReward(address _recipient, uint256 _rewardAmount, bytes[] calldata _sigs) external {
+    function claimReward(address _recipient, uint256 _rewardAmount, bytes calldata _sig) external {
         bytes32 hash = keccak256(abi.encodePacked(_recipient, _rewardAmount)).toEthSignedMessageHash();
+        address signer = hash.recover(_sig);
+        require(signer == _recipient, "wrong sig");
 
         uint256 newReward = _rewardAmount - claimedRewardAmounts[_recipient];
         require(newReward > 0, "No new reward");
