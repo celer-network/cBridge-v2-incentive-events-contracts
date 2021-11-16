@@ -29,10 +29,9 @@ contract StakingReward is Ownable {
     function claimReward(address calldata _recipient, uint256 calldata _rewardAmount, bytes[] calldata _sigs) external {
         staking.verifySignatures(_rewardRequest, _sigs);
 
-        uint256 cumulativeRewardAmount = reward.cumulativeRewardAmount;
-        uint256 newReward = cumulativeRewardAmount - claimedRewardAmounts[_recipient];
+        uint256 newReward = _rewardAmount - claimedRewardAmounts[_recipient];
         require(newReward > 0, "No new reward");
-        claimedRewardAmounts[_recipient] = cumulativeRewardAmount;
+        claimedRewardAmounts[_recipient] = _rewardAmount;
         CELER_TOKEN.safeTransfer(_recipient, newReward);
     }
 
