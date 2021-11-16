@@ -35,6 +35,7 @@ contract StakingReward is Ownable {
         uint256 newReward = _rewardAmount - claimedRewardAmounts[_recipient];
         require(newReward > 0, "No new reward");
         claimedRewardAmounts[_recipient] = _rewardAmount;
+
         CELER_TOKEN.safeTransfer(_recipient, newReward);
     }
 
