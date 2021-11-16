@@ -30,7 +30,7 @@ contract StakingReward is Ownable {
     function claimReward(address _recipient, uint256 _rewardAmount, bytes calldata _sig) external {
         bytes32 hash = keccak256(abi.encodePacked(_recipient, _rewardAmount)).toEthSignedMessageHash();
         address signer = hash.recover(_sig);
-        require(signer == _recipient, "wrong sig");
+        require(signer == Ownable.owner(), "wrong sig");
 
         uint256 newReward = _rewardAmount - claimedRewardAmounts[_recipient];
         require(newReward > 0, "No new reward");
