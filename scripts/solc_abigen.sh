@@ -5,10 +5,10 @@
 # BRANCH: ${{ github.head_ref }}
 # GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
-SOLC_VER="v0.8.9+commit.e5eed63a"
-OPENZEPPELIN="openzeppelin-contracts-4.2.0"          # if change, also need to change the url in dld_solc
-GETH_VER="geth-alltools-linux-amd64-1.10.7-12f0ff40" # for abigen
-CNTRDIR="contracts"                                  # folder name for all contracts code
+SOLC_VER="v0.8.10+commit.fc410830"
+OPENZEPPELIN="openzeppelin-contracts-4.3.3"           # if change, also need to change the url in dld_solc
+GETH_VER="geth-alltools-linux-amd64-1.10.12-6c4dc6c3" # for abigen
+CNTRDIR="contracts"                                   # folder name for all contracts code
 GO_REPO=https://${GH_TOKEN}@github.com/celer-network/sgn-v2
 
 # xx.sol under contracts/, no need for .sol suffix, if sol file is in subfolder, just add the relative path
@@ -20,7 +20,7 @@ dld_solc() {
   curl -L "https://binaries.soliditylang.org/linux-amd64/solc-linux-amd64-${SOLC_VER}" -o solc && chmod +x solc
   sudo mv solc /usr/local/bin/
   # only need oz's contracts subfolder, files will be at $CNTRDIR/$OPENZEPPELIN/contracts
-  curl -L "https://github.com/OpenZeppelin/openzeppelin-contracts/archive/v4.2.0.tar.gz" | tar -xz -C $CNTRDIR $OPENZEPPELIN/contracts/
+  curl -L "https://github.com/OpenZeppelin/openzeppelin-contracts/archive/v4.3.3.tar.gz" | tar -xz -C $CNTRDIR $OPENZEPPELIN/contracts/
 }
 
 dld_abigen() {
@@ -35,7 +35,7 @@ gen_dtHelper() {
   CTRNAME="DtHelper"
   SOLFILE="$CTRNAME.sol"
   cat >$SOLFILE <<EOF
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-3.0-only
 // Auto generated. DO NOT MODIFY MAUALLY
 pragma solidity >=0.8.0;
 pragma abicoder v2;
