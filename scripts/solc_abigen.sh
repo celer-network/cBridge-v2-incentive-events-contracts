@@ -13,7 +13,7 @@ GO_REPO=https://${GH_TOKEN}@github.com/celer-network/sgn-v2
 
 # xx.sol under contracts/, no need for .sol suffix, if sol file is in subfolder, just add the relative path
 solFiles=(
-  IncentiveEventReward
+  IncentiveEventsReward
 )
 
 dld_solc() {
@@ -53,11 +53,12 @@ EOF
 
 # MUST run this under repo root
 # will generate a single combined.json under $CNTRDIR
-# solc --base-path $PWD --allow-paths . --overwrite --optimize --optimize-runs 800 --pretty-json --combined-json abi,bin -o . '@openzeppelin/'=openzeppelin-contracts-4.2.0/ IncentiveEventReward.sol
+# solc --base-path $PWD --allow-paths . --overwrite --optimize --optimize-runs 800 --pretty-json --combined-json abi,bin -o . '@openzeppelin/'=openzeppelin-contracts-4.3.3/ IncentiveEventsReward.sol
 # jq '."contracts"|=with_entries(select(.key|test("^openzeppelin")|not))' combined.json>tmp.json
+# mv tmp.json combined.json
 run_solc() {
   pushd $CNTRDIR
-  solc --base-path $PWD --allow-paths . --overwrite --optimize --optimize-runs 800 --pretty-json --combined-json abi,bin -o . '@openzeppelin/'=openzeppelin-contracts-4.2.0/ \
+  solc --base-path $PWD --allow-paths . --overwrite --optimize --optimize-runs 800 --pretty-json --combined-json abi,bin -o . '@openzeppelin/'=openzeppelin-contracts-4.3.3/ \
     $(for f in ${solFiles[@]}; do echo -n "$f.sol "; done)
   no_openzeppelin combined.json # combined.json file name is hardcoded in solc
   popd
@@ -71,7 +72,7 @@ no_openzeppelin() {
 }
 
 # MUST run this under contract repo root
-# abigen -combined-json ../$CNTRDIR/combined.json -pkg eth -out eth/bindings.go
+# abigen -combined-json ./contracts/combined.json -pkg eth -out eth/incentive_rewards_bindings.go
 run_abigen() {
   PR_COMMIT_ID=$(git rev-parse --short HEAD)
   git clone $GO_REPO
