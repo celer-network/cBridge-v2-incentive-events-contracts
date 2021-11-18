@@ -9,11 +9,10 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const deployResult = await deploy('IncentiveEventsReward', {
+  await deploy('IncentiveEventsReward', {
     from: deployer,
     log: true
   });
-  console.log("deploy to ", deployResult.address)
 };
 
 deployFunc.tags = ['IncentiveEventsReward'];
