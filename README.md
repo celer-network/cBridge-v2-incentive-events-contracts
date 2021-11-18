@@ -40,3 +40,25 @@ npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
 # Performance optimizations
 
 For faster runs of your tests and scripts, consider skipping ts-node's type checking by setting the environment variable `TS_NODE_TRANSPILE_ONLY` to `1` in hardhat's environment. For more details see [the documentation](https://hardhat.org/guides/typescript.html#performance-optimizations).
+
+### Deploy contracts
+
+1. `cp .env.template .env`, then ensure all environment variables are set in `.env`.
+
+2. Deploy SGN and Staking contracts:
+
+```sh
+hardhat deploy --network <network> --tags SGNStaking
+```
+
+Deploy Bridge contract:
+
+```sh
+hardhat deploy --network <network>  --tags Bridge
+```
+
+3. Verify contracts on Etherscan:
+
+```sh
+hardhat etherscan-verify --network <network> --license "GPL-3.0" --force-license
+```

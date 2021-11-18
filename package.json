@@ -34,6 +34,8 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.3",
+    "hardhat-contract-sizer": "^2.1.1",
+    "hardhat-deploy": "^0.9.8",
     "solc": "^0.8.10"
   }
 }
