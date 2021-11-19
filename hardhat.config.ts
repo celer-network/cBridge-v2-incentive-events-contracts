@@ -118,7 +118,7 @@ const config: HardhatUserConfig = {
     disambiguatePaths: false
   },
   gasReporter: {
-    enabled: process.env.REPORT_GAS === 'true' ? true : false,
+    enabled: process.env.REPORT_GAS === 'true',
     noColors: true,
     outputFile: 'reports/gas_usage/summary.txt'
   },
