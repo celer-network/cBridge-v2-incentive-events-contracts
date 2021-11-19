@@ -66,7 +66,6 @@ const config: HardhatUserConfig = {
     },
     bscTest: {
       url: bscTestEndpoint,
-      chainId: 97,
       accounts: [`0x${bscTestPrivateKey}`]
     },
     fantomTest: {

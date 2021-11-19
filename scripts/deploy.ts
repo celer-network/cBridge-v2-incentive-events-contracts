@@ -1,18 +1,24 @@
 import * as dotenv from 'dotenv';
-import { DeployFunction } from 'hardhat-deploy/types';
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import {DeployFunction} from 'hardhat-deploy/types';
+import {HardhatRuntimeEnvironment} from 'hardhat/types';
 
 dotenv.config();
 
 const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deployments, getNamedAccounts } = hre;
-  const { deploy } = deployments;
-  const { deployer } = await getNamedAccounts();
+    const {deployments, getNamedAccounts} = hre;
+    const {deploy} = deployments;
+    const {deployer} = await getNamedAccounts();
 
-  await deploy('IncentiveEventsReward', {
-    from: deployer,
-    log: true
-  });
+    console.log("deployer:", deployer)
+    console.log("CELR addr:", process.env.CELR)
+
+    await deploy('IncentiveEventsReward', {
+        from: deployer,
+        log: true,
+        args: [
+            process.env.CELR
+        ]
+    });
 };
 
 deployFunc.tags = ['IncentiveEventsReward'];
