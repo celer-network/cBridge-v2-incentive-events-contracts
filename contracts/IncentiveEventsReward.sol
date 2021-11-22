@@ -52,7 +52,9 @@ contract IncentiveEventsReward is Pausable, Ownable {
         require(deadline != 0, "Invalid eventId");
         require(block.timestamp <= deadline, "Claim expired");
 
-        bytes32 hash = keccak256(abi.encodePacked(_recipient, _eventId, _rewardAmount)).toEthSignedMessageHash();
+        bytes32 hash = keccak256(
+            abi.encodePacked(block.chainid, address(this), "IncentiveRewardClaim", _recipient, _eventId, _rewardAmount)
+        ).toEthSignedMessageHash();
         address recoveredSigner = hash.recover(_sig);
         require(recoveredSigner == signer, "Invalid sig");
 
