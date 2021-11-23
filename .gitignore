@@ -30,3 +30,9 @@ artifacts
 /.idea/
 /eth/
 /contracts/combined.json
+
+node_modules
+
+#Buidler files
+cache
+artifacts
