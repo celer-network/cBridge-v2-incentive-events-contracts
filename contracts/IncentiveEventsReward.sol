@@ -16,7 +16,7 @@ contract IncentiveEventsReward is Pausable, Ownable {
     IERC20 public immutable CELER_TOKEN;
 
     // The signer for reward claims
-    address public signer;
+    address public rewardSigner;
 
     // eventId => recipient => CELR reward amount
     mapping(uint256 => mapping(address => uint256)) public claimedRewardAmounts;
@@ -56,7 +56,7 @@ contract IncentiveEventsReward is Pausable, Ownable {
             abi.encodePacked(block.chainid, address(this), "IncentiveRewardClaim", _recipient, _eventId, _rewardAmount)
         ).toEthSignedMessageHash();
         address recoveredSigner = hash.recover(_sig);
-        require(recoveredSigner == signer, "Invalid sig");
+        require(recoveredSigner == rewardSigner, "Invalid sig");
 
         uint256 newReward = _rewardAmount - claimedRewardAmounts[_eventId][_recipient];
         require(newReward > 0, "No new reward");
@@ -70,7 +70,7 @@ contract IncentiveEventsReward is Pausable, Ownable {
     }
 
     function setSigner(address _signer) external onlyOwner {
-        signer = _signer;
+        rewardSigner = _signer;
     }
 
     /**

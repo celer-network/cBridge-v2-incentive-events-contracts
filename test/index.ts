@@ -1,38 +1,37 @@
 import {expect} from "chai";
-import {ethers} from "hardhat";
-import {keccak256, pack} from '@ethersproject/solidity';
+import {ethers, getChainId} from "hardhat";
 
 export const ZERO_ADDR = '0x0000000000000000000000000000000000000000';
 
 describe("IncentiveEventsReward", function () {
     it("sign", async function () {
-        const [owner, addr1] = await ethers.getSigners();
+        const [owner, signer, winner] = await ethers.getSigners();
         const contractFactory = await ethers.getContractFactory("IncentiveEventsReward", owner);
         const contract = await contractFactory.deploy(process.env.CELR!);
         await contract.deployed();
+        const chainId = await getChainId();
+        console.log("contract addr:", contract.address, ", chainId:", chainId)
 
         console.log("owner:", owner.address)
-        console.log("addr1:", addr1.address)
-        await contract.signer.getAddress().then(value => {
-            console.log("contract signer addr is now:", value)
-        })
-        await expect(contract.connect(addr1).setSigner(addr1.address)).to.be.revertedWith("Ownable: caller is not the owner");
-        await contract.signer.getAddress().then(value => {
-            console.log("contract signer addr is now:", value)
-        })
-        await contract.connect(owner).setSigner(addr1.address)
-        await contract.signer.getAddress().then(value => {
-            console.log("contract signer addr is now:", value)
-            expect(value).to.equal(addr1.address)
-        })
+        console.log("signer:", signer.address)
+        console.log("winner:", winner.address)
+        console.log("contract reward signer addr before is:", await contract.rewardSigner())
+        await expect(contract.connect(signer).setSigner(signer.address)).to.be.revertedWith("Ownable: caller is not the owner");
+        await contract.connect(owner).setSigner(signer.address);
+        console.log("contract reward signer addr is now:", await contract.rewardSigner())
+        expect(await contract.rewardSigner()).to.equal(signer.address)
+        await contract.connect(owner).setClaimDeadline(1, 1638184622);
+
+        // expect(await contract.signer.getAddress()).to.equal(signer.address)
 
 
-        const data = pack(['address', 'uint256', 'uint256'], ["ssssss", 1, 100]);
-        const hash = keccak256(['bytes'], [data]);
-        // const sigs = await calculateSignatures(currSigners, hex2Bytes(hash));
-        const setGreetingTx = await contract.claimReward("fffff", 1, 100, "sss");
+        const hash = ethers.utils.solidityKeccak256(["uint256", "address", "string", "address", "uint256", "uint256"],
+            [chainId, contract.address, "IncentiveRewardClaim", winner.address, "1", "10000"]);
+        const sig = await signer.signMessage(hash);
+        console.log("sig:", sig)
+        const recoverAddress = ethers.utils.verifyMessage(hash, sig);
+        console.log("recoverAddress:", recoverAddress)
 
-        // wait until the transaction is mined
-        await setGreetingTx.wait();
+        await contract.claimReward(winner.address, 1, 10000, sig);
     });
 });
