@@ -5,7 +5,7 @@
 # BRANCH: ${{ github.head_ref }}
 # GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
-SOLC_VER="v0.8.10+commit.fc410830"
+SOLC_VER="v0.8.11+commit.d7f03943"
 OPENZEPPELIN="openzeppelin-contracts-4.3.3"           # if change, also need to change the url in dld_solc
 GETH_VER="geth-alltools-linux-amd64-1.10.12-6c4dc6c3" # for abigen
 CNTRDIR="contracts"                                   # folder name for all contracts code

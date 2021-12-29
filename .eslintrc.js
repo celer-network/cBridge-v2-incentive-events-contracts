@@ -20,5 +20,12 @@ module.exports = {
   },
   rules: {
     'node/no-unsupported-features/es-syntax': ['error', { ignores: ['modules'] }]
+  },
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.d.ts', '.js', '.ts']
+      }
+    }
   }
 };
