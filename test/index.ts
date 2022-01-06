@@ -6,11 +6,11 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
 export const ZERO_ADDR = '0x0000000000000000000000000000000000000000';
 
-describe('IncentiveEventsReward', function () {
+describe('IncentiveEventsRewardNew', function () {
   it('sign', async function () {
     const [contributor, winner] = waffle.provider.getWallets();
     const [owner, signer] = await ethers.getSigners();
-    const contractFactory = await ethers.getContractFactory('IncentiveEventsReward', owner);
+    const contractFactory = await ethers.getContractFactory('IncentiveEventsRewardNew', owner);
     const contractFactory1 = await ethers.getContractFactory('TestERC20', owner);
     const celr = await contractFactory1.deploy();
 

@@ -12,73 +12,57 @@ contract IncentiveEventsReward is Pausable, Ownable {
     using SafeERC20 for IERC20;
     using ECDSA for bytes32;
 
+    // Address of the Celer Token
+    IERC20 public immutable CELER_TOKEN;
+
     // The signer for reward claims
     address public rewardSigner;
 
-    // eventId => recipient => token => reward amount
-    mapping(uint256 => mapping(address => mapping(address => uint256))) public claimedRewardAmounts;
+    // eventId => recipient => CELR reward amount
+    mapping(uint256 => mapping(address => uint256)) public claimedRewardAmounts;
     // eventId => timestamp
     mapping(uint256 => uint256) public claimDeadlines;
 
-    event IncentiveRewardClaimed(address indexed recipient, address indexed token, uint256 reward);
-    event IncentiveRewardContributed(address indexed contributor, address indexed token, uint256 contribution);
+    event IncentiveRewardClaimed(address indexed recipient, uint256 reward);
+    event IncentiveRewardContributed(address indexed contributor, uint256 contribution);
+
+    /**
+     * @notice IncentiveEventsReward constructor
+     * @param _celerTokenAddress address of the Celer Token Contract
+     */
+    constructor(address _celerTokenAddress) {
+        CELER_TOKEN = IERC20(_celerTokenAddress);
+    }
 
     /**
      * @notice Claim reward, checking for signature from the signer
      * @dev recipient needs to claim all the reward by the deadline
      * @param _recipient recipient address
      * @param _eventId event id
-     * @param _tokens reward tokens
-     * @param _rewardAmounts reward amounts
+     * @param _rewardAmount reward amount
      * @param _sig signature
      */
     function claimReward(
         address _recipient,
         uint256 _eventId,
-        address[] calldata _tokens,
-        uint256[] calldata _rewardAmounts,
+        uint256 _rewardAmount,
         bytes calldata _sig
     ) external whenNotPaused {
         uint256 deadline = claimDeadlines[_eventId];
         require(deadline != 0, "Invalid eventId");
         require(block.timestamp <= deadline, "Claim expired");
-        require(_tokens.length == _rewardAmounts.length, "Mismatch reward info lengths");
 
         bytes32 hash = keccak256(
-            abi.encodePacked(
-                block.chainid,
-                address(this),
-                "IncentiveRewardClaim",
-                _recipient,
-                _eventId,
-                _tokens,
-                _rewardAmounts
-            )
+            abi.encodePacked(block.chainid, address(this), "IncentiveRewardClaim", _recipient, _eventId, _rewardAmount)
         ).toEthSignedMessageHash();
         address recoveredSigner = hash.recover(_sig);
         require(recoveredSigner == rewardSigner, "Invalid sig");
 
-        bool hasNewReward;
-        for (uint256 i = 0; i < _tokens.length; i++) {
-            if (_claimOneReward(_recipient, _eventId, _tokens[i], _rewardAmounts[i]) > 0) {
-                hasNewReward = true;
-            }
-        }
-        require(hasNewReward, "No new reward");
-    }
-
-    function _claimOneReward(
-        address _recipient,
-        uint256 _eventId,
-        address _token,
-        uint256 _rewardAmount
-    ) internal returns (uint256) {
-        uint256 claimed = claimedRewardAmounts[_eventId][_recipient][_token];
-        uint256 newReward = _rewardAmount - claimed;
-        claimedRewardAmounts[_eventId][_recipient][_token] = _rewardAmount;
-        IERC20(_token).safeTransfer(_recipient, newReward);
-        emit IncentiveRewardClaimed(_recipient, _token, newReward);
-        return newReward;
+        uint256 newReward = _rewardAmount - claimedRewardAmounts[_eventId][_recipient];
+        require(newReward > 0, "No new reward");
+        claimedRewardAmounts[_eventId][_recipient] = _rewardAmount;
+        CELER_TOKEN.safeTransfer(_recipient, newReward);
+        emit IncentiveRewardClaimed(_recipient, newReward);
     }
 
     function setClaimDeadline(uint256 _eventId, uint256 _deadline) external onlyOwner {
@@ -90,24 +74,22 @@ contract IncentiveEventsReward is Pausable, Ownable {
     }
 
     /**
-     * @notice Contribute tokens to the reward pool
-     * @param _token the token address
-     * @param _amount the amount of token to contribute
+     * @notice Contribute CELR tokens to the reward pool
+     * @param _amount the amount of CELR token to contribute
      */
-    function contributeToRewardPool(address _token, uint256 _amount) external whenNotPaused {
+    function contributeToRewardPool(uint256 _amount) external whenNotPaused {
         address contributor = msg.sender;
-        IERC20(_token).safeTransferFrom(contributor, address(this), _amount);
-        emit IncentiveRewardContributed(contributor, _token, _amount);
+        IERC20(CELER_TOKEN).safeTransferFrom(contributor, address(this), _amount);
+        emit IncentiveRewardContributed(contributor, _amount);
     }
 
     /**
-     * @notice Owner drains tokens when the contract is paused
+     * @notice Owner drains CELR tokens when the contract is paused
      * @dev emergency use only
-     * @param _token the token address
-     * @param _amount drained token amount
+     * @param _amount drained CELR token amount
      */
-    function drainToken(address _token, uint256 _amount) external whenPaused onlyOwner {
-        IERC20(_token).safeTransfer(msg.sender, _amount);
+    function drainToken(uint256 _amount) external whenPaused onlyOwner {
+        IERC20(CELER_TOKEN).safeTransfer(msg.sender, _amount);
     }
 
     /**
