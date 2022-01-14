@@ -10,15 +10,13 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployer } = await getNamedAccounts();
 
   console.log('deployer:', deployer);
-  console.log('CELR addr:', process.env.CELR);
 
-  await deploy('IncentiveEventsReward', {
+  await deploy('IncentiveEventsRewardNew', {
     from: deployer,
-    log: true,
-    args: [process.env.CELR]
+    log: true
   });
 };
 
-deployFunc.tags = ['IncentiveEventsReward'];
+deployFunc.tags = ['IncentiveEventsRewardNew'];
 deployFunc.dependencies = [];
 export default deployFunc;
