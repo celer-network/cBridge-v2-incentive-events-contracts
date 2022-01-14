@@ -17,6 +17,7 @@ typechain/
 .vscode/
 .env
 solc-input-*.json
+.idea/
 
 node_modules
 .env

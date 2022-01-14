@@ -18,12 +18,12 @@ async function main() {
     console.log("CELR addr:", process.env.CELR)
 
     // We get the contract to deploy
-    const contractFactory = await ethers.getContractFactory("IncentiveEventsReward");
-    const contract = await contractFactory.deploy(process.env.CELR!);
+    const contractFactory = await ethers.getContractFactory("IncentiveEventsRewardNew");
+    const contract = await contractFactory.deploy();
 
     await contract.deployed();
 
-    console.log("IncentiveEventsReward deployed to:", contract.address);
+    console.log("IncentiveEventsRewardNew deployed to:", contract.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

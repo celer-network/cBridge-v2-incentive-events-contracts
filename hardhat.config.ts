@@ -71,7 +71,8 @@ const config: HardhatUserConfig = {
     },
     bscTest: {
       url: bscTestEndpoint,
-      accounts: [`0x${bscTestPrivateKey}`]
+      accounts: [`0x${bscTestPrivateKey}`],
+      gas: 2100000
     },
     fantomTest: {
       url: fantomTestEndpoint,
@@ -108,7 +109,7 @@ const config: HardhatUserConfig = {
     }
   },
   solidity: {
-    version: '0.8.9',
+    version: '0.8.11',
     settings: {
       optimizer: {
         enabled: true,
