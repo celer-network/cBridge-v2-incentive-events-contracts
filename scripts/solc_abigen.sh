@@ -53,7 +53,7 @@ EOF
 
 # MUST run this under repo root
 # will generate a single combined.json under $CNTRDIR
-# solc --base-path $PWD --allow-paths . --overwrite --optimize --optimize-runs 800 --pretty-json --combined-json abi,bin -o . '@openzeppelin/'=openzeppelin-contracts-4.3.3/ IncentiveEventsReward.sol
+# solc --base-path $PWD --allow-paths . --overwrite --optimize --optimize-runs 800 --pretty-json --combined-json abi,bin -o . '@openzeppelin/'=openzeppelin-contracts-4.3.3/ IncentiveEventsRewardNew.sol
 # jq '."contracts"|=with_entries(select(.key|test("^openzeppelin")|not))' combined.json>tmp.json
 # mv tmp.json combined.json
 run_solc() {

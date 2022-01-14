@@ -71,7 +71,8 @@ const config: HardhatUserConfig = {
     },
     bscTest: {
       url: bscTestEndpoint,
-      accounts: [`0x${bscTestPrivateKey}`]
+      accounts: [`0x${bscTestPrivateKey}`],
+      gas: 2100000
     },
     fantomTest: {
       url: fantomTestEndpoint,
