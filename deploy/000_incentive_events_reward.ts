@@ -11,10 +11,12 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
   console.log('deployer:', deployer);
 
-  await deploy('IncentiveEventsReward', {
-    from: deployer,
-    log: true
-  });
+  // const incentiveEventsReward = await deploy('IncentiveEventsReward', {
+  //   from: deployer,
+  //   log: true
+  // });
+  const incentiveEventsReward = { address: '0xf6C5d7DA1654d9BbDe0D25A5fd6776B37a2aD881' };
+  await hre.run('verify:verify', { address: incentiveEventsReward.address });
 };
 
 deployFunc.tags = ['IncentiveEventsReward'];

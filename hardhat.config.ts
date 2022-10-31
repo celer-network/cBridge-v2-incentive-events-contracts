@@ -14,6 +14,7 @@ dotenv.config();
 const DEFAULT_ENDPOINT = 'http://localhost:8545';
 const DEFAULT_PRIVATE_KEY = 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
+// Testnets
 const kovanEndpoint = process.env.KOVAN_ENDPOINT || DEFAULT_ENDPOINT;
 const kovanPrivateKey = process.env.KOVAN_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
@@ -29,6 +30,7 @@ const bscTestPrivateKey = process.env.BSC_TEST_PRIVATE_KEY || DEFAULT_PRIVATE_KE
 const fantomTestEndpoint = process.env.FANTOM_TEST_ENDPOINT || DEFAULT_ENDPOINT;
 const fantomTestPrivateKey = process.env.FANTOM_TEST_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
+// Mainnets
 const ethMainnetEndpoint = process.env.ETH_MAINNET_ENDPOINT || DEFAULT_ENDPOINT;
 const ethMainnetPrivateKey = process.env.ETH_MAINNET_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
@@ -47,11 +49,19 @@ const fantomPrivateKey = process.env.FANTOM_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const avalancheEndpoint = process.env.AVALANCHE_ENDPOINT || DEFAULT_ENDPOINT;
 const avalanchePrivateKey = process.env.AVALANCHE_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
+const optimismEndpoint = process.env.OPTIMISM_ENDPOINT || DEFAULT_ENDPOINT;
+const optimismPrivateKey = process.env.OPTIMISM_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+
 const config: HardhatUserConfig = {
   etherscan: {
     // Your API key for Etherscan
     // Obtain one at https://etherscan.io/
-    apiKey: process.env.BSCSCAN_API_KEY
+    apiKey: {
+      bsc: process.env.BSCSCAN_API_KEY as string,
+      mainnet: process.env.ETHERSCAN_API_KEY as string,
+      optimisticEthereum: process.env.OPTIMISTIC_ETHERSCAN_API_KEY as string
+    },
+    customChains: []
   },
   defaultNetwork: 'hardhat',
   networks: {
@@ -101,6 +111,10 @@ const config: HardhatUserConfig = {
     avalanche: {
       url: avalancheEndpoint,
       accounts: [`0x${avalanchePrivateKey}`]
+    },
+    optimism: {
+      url: optimismEndpoint,
+      accounts: [`0x${optimismPrivateKey}`]
     }
   },
   namedAccounts: {
